@@ -11,8 +11,15 @@
         <module>api</module>
         <module>service</module>
         <module>domain</module>
+        <module>commons</module>
     </modules>
     <packaging>pom</packaging>
+
+    <dependencyManagement>
+        <dependencies>
+
+        </dependencies>
+    </dependencyManagement>
 
 
 </project>

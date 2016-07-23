@@ -7,7 +7,7 @@ public class Role {
 
     private String roleName;
 
-    private static Role build(final String roleName){
+    public static Role build(final String roleName){
         return new Role(roleName);
     }
 
@@ -21,5 +21,12 @@ public class Role {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    @Override
+    public String toString() {
+        return "Role{" +
+                "roleName='" + roleName + '\'' +
+                '}';
     }
 }

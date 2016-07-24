@@ -1,9 +1,11 @@
 package com.schibsted.domain.role;
 
+import java.io.Serializable;
+
 /**
  * Created by edu on 23/07/2016.
  */
-public class Role {
+public class Role implements Serializable {
 
     private String roleName;
 

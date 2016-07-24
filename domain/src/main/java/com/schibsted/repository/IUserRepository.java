@@ -8,4 +8,10 @@ import com.schibsted.domain.user.User;
 public interface IUserRepository {
 
     User loadUserByUsernameAndPassword(String username, String password);
+
+    User save(User user);
+
+    User update(User userUpdate);
+
+    User findByUsername(String username);
 }

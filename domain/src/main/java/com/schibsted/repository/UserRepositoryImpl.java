@@ -7,19 +7,20 @@ import com.schibsted.domain.user.User;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by edu on 23/07/2016.
  */
-public class UserRepositoryImpl implements IUserRepository{
+public class UserRepositoryImpl implements IUserRepository {
 
-    public UserRepositoryImpl(){
-        if(userList.isEmpty()){
+    public UserRepositoryImpl() {
+        if (userList.isEmpty()) {
             initUsers();
         }
     }
 
-    private  List<User> userList = new ArrayList<User>();
+    private List<User> userList = new ArrayList<User>();
 
     private void initUsers() {
         Role role1 = Role.build(Constants.PAGE_1);
@@ -52,11 +53,38 @@ public class UserRepositoryImpl implements IUserRepository{
     }
 
     @Override
-    public User loadUserByUsernameAndPassword(final String username, final String password){
+    public User loadUserByUsernameAndPassword(final String username, final String password) {
         return userList.stream()
                 .filter(user -> user.getUsername().equals(username) && user.getPassword().equals(password))
                 .findAny()
                 .orElse(null);
     }
 
+    @Override
+    public User save(final User user) {
+        userList.add(user);
+        return user;
+    }
+
+    @Override
+    public User update(final User userUpdate) {
+        final User toUpdate = userList.stream()
+                .filter(user -> user.getUsername().equals(userUpdate.getUsername()))
+                .findAny()
+                .orElse(null);
+        final Optional<User> optionalUser = Optional.ofNullable(toUpdate);
+        if (optionalUser.isPresent()) {
+            userList.remove(toUpdate);
+            userList.add(userUpdate);
+        }
+        return userUpdate;
+    }
+
+    @Override
+    public User findByUsername(final String username) {
+        return userList.stream()
+                .filter(user -> user.getUsername().equals(username))
+                .findAny()
+                .orElse(null);
+    }
 }

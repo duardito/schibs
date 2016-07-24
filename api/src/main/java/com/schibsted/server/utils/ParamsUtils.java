@@ -1,7 +1,5 @@
 package com.schibsted.server.utils;
 
-import com.sun.net.httpserver.HttpExchange;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,13 +8,8 @@ import java.util.Map;
  */
 public final class ParamsUtils {
 
-    private static String getParamFromPath(final HttpExchange httpExchange) {
-        return httpExchange.getRequestURI().getQuery();
-    }
 
-    public static Map<String, String> queryToMap(final HttpExchange httpExchange) {
-
-        final String query = getParamFromPath(httpExchange);
+    public static Map<String, String> queryToMap(final String query) {
 
         Map<String, String> result = new HashMap<String, String>();
         for (String param : query.split("&")) {

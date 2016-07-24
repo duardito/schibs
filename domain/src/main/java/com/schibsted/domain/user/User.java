@@ -2,12 +2,13 @@ package com.schibsted.domain.user;
 
 import com.schibsted.domain.role.Role;
 
+import java.io.Serializable;
 import java.util.LinkedHashSet;
 
 /**
  * Created by edu on 23/07/2016.
  */
-public class User {
+public class User implements Serializable {
 
     private String username;
     private String password;

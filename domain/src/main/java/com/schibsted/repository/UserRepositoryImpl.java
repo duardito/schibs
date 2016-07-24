@@ -14,15 +14,12 @@ import java.util.Optional;
  */
 public class UserRepositoryImpl implements IUserRepository {
 
-    public UserRepositoryImpl() {
-        if (userList.isEmpty()) {
-            initUsers();
-        }
+    private static List<User> userList = new ArrayList<User>();
+    static {
+        initUsers();
     }
 
-    private List<User> userList = new ArrayList<User>();
-
-    private void initUsers() {
+    private static void initUsers() {
         Role role1 = Role.build(Constants.PAGE_1);
         Role role2 = Role.build(Constants.PAGE_2);
         Role role3 = Role.build(Constants.PAGE_3);

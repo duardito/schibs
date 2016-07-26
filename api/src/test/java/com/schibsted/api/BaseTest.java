@@ -28,7 +28,7 @@ import java.util.*;
 public abstract class BaseTest {
 
     @Before
-    public void initServer() throws IOException {
+    public  void initServer() throws IOException {
         InitServer.startServer();
     }
 
@@ -38,7 +38,6 @@ public abstract class BaseTest {
     }
 
     private String encodeUserLogin(final String username,final String password) {
-
         final String build = username + ":" + password;
         final byte[] message = build.getBytes(StandardCharsets.UTF_8);
         return Base64.getEncoder().encodeToString(message);
@@ -84,8 +83,7 @@ public abstract class BaseTest {
         final BufferedReader br = new BufferedReader(isr);
         final String query = br.readLine();
         JsonParser jsonParser = new JsonParser();
-        JsonObject jo = (JsonObject)jsonParser.parse(query);
-        return jo.getAsJsonObject("value");
+        return (JsonObject)jsonParser.parse(query);
     }
 
 

@@ -1,11 +1,18 @@
-package com.schibsted.server.exception;
-
-import java.io.Serializable;
+package com.schibsted.server.messages;
 
 /**
  * Created by edu on 24/07/2016.
  */
-public class OutputMessage implements Serializable{
+public class OutputMessage {
+
+    public static OutputMessage build(String code, String message){
+        return  new OutputMessage(code, message);
+    }
+
+    private OutputMessage(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 
     private String code;
     private String message;

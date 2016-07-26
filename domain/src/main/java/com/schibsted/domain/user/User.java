@@ -1,7 +1,5 @@
 package com.schibsted.domain.user;
 
-import com.schibsted.domain.role.Role;
-
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 
@@ -12,13 +10,13 @@ public class User implements Serializable {
 
     private String username;
     private String password;
-    private LinkedHashSet<Role> roles = new LinkedHashSet<Role>();
+    private LinkedHashSet<String> roles = new LinkedHashSet<String>();
 
-    public static User build(final String username,final String password, final LinkedHashSet<Role> roles){
+    public static User build(final String username,final String password, final LinkedHashSet<String> roles){
         return new User(username, password, roles);
     }
 
-    private User(final String username, final String password, final LinkedHashSet<Role> roles) {
+    private User(final String username, final String password, final LinkedHashSet<String> roles) {
         this.username = username;
         this.password = password;
         this.roles = roles;
@@ -40,11 +38,11 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public LinkedHashSet<Role> getRoles() {
+    public LinkedHashSet<String> getRoles() {
         return roles;
     }
 
-    public void setRoles(LinkedHashSet<Role> roles) {
+    public void setRoles(LinkedHashSet<String> roles) {
         this.roles = roles;
     }
 

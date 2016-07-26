@@ -1,9 +1,9 @@
 package com.schibsted.server.handler;
 
-import com.schibsted.domain.role.Role;
 import com.schibsted.domain.user.User;
-import com.schibsted.server.exception.MessageWrapper;
-import com.schibsted.server.exception.OutputMessage;
+import com.schibsted.server.exception.UnathorizedException;
+import com.schibsted.server.messages.user.UserUpdatedOrCreated;
+import com.schibsted.server.messages.user.UserfieldsRequired;
 import com.schibsted.server.security.AccessUtils;
 import com.schibsted.server.utils.ParamsUtils;
 import com.schibsted.service.IUserService;
@@ -39,58 +39,88 @@ public class UserHandler implements HttpHandler {
         }
     }
 
-    @Override
-    public void handle(HttpExchange httpExchange) throws IOException {
+    private User buildUserFromRequest(HttpExchange httpExchange) throws IOException {
+        final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
+        final BufferedReader br = new BufferedReader(isr);
+        final String query = br.readLine();
+        final Map<String, String> queryMap = ParamsUtils.queryToMap(query);
 
-        OutputMessage outputMessage = null;
-        Optional <User> userMod = null;
+        final String username = queryMap.get("username");
+        final String password = queryMap.get("password");
+        final String roles = queryMap.get("roles");
+
+        return User.build(username, password, getRoles(roles));
+    }
+
+    private boolean validateFields(User user){
+       return user.getPassword()!=null && !user.getPassword().isEmpty() &&
+               user.getUsername()!=null && !user.getUsername().isEmpty();
+    }
+
+    @Override
+    public void handle(HttpExchange httpExchange) {
+
+        Optional<User> userMod = null;
         try {
             final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
-            final String access = accessUtils.loginUser(authorization);
-            if ("403".equals(access)) {
+            final Optional<User> access = accessUtils.loginUser(authorization);
+            if (!access.isPresent()) {
                 httpExchange.sendResponseHeaders(403, 0);
-
-                outputMessage = new OutputMessage();
-                outputMessage.setCode("403");
-                outputMessage.setMessage("unathorized access");
-
+                new UnathorizedException(httpExchange.getResponseBody());
             } else {
-                final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
-                final BufferedReader br = new BufferedReader(isr);
-                final String query = br.readLine();
-                final Map<String, String> queryMap = ParamsUtils.queryToMap(query);
-
-                final String username = queryMap.get("username");
-                final String password = queryMap.get("password");
-                final String roles = queryMap.get("roles");
-
-                final User user = User.build(username, password, getRoles(roles));
-
 
                 final String methodType = httpExchange.getRequestMethod();
 
                 if ("POST".equals(methodType)) {
-                    userMod = userService.save(user);
+
+
+                    if (!accessUtils.hasAdminPermissions(access.get())) {
+                        httpExchange.sendResponseHeaders(403, 0);
+                        new UnathorizedException(httpExchange.getResponseBody());
+
+                    } else {
+                        final User user = buildUserFromRequest(httpExchange);
+
+                        if(validateFields(user)){
+                            userMod = userService.save(user);
+                            httpExchange.sendResponseHeaders(200, 0);
+                            new UserUpdatedOrCreated(httpExchange.getResponseBody(), userMod.get());
+                        }else{
+                            httpExchange.sendResponseHeaders(400, 0);
+                            new UserfieldsRequired(httpExchange.getResponseBody());
+                        }
+                    }
+
                 } else if ("PUT".equals(methodType)) {
-                    userMod =userService.update(user);
+
+                    if (!accessUtils.hasAdminPermissions(access.get())) {
+                        httpExchange.sendResponseHeaders(403, 0);
+                        new UnathorizedException(httpExchange.getResponseBody());
+
+                    } else {
+                        final User user = buildUserFromRequest(httpExchange);
+                        userMod = userService.update(user);
+                        httpExchange.sendResponseHeaders(200, 0);
+                        new UserUpdatedOrCreated(httpExchange.getResponseBody(), userMod.get());
+                    }
+
                 } else if ("GET".equals(methodType)) {
-                    userMod =userService.findByUsername(user.getUsername());
+
+                    //userMod =userService.findByUsername(user.getUsername());
                 } else {
                     //delete not implemented
                 }
-                httpExchange.sendResponseHeaders(200, 0);
 
-                outputMessage = new OutputMessage();
-                outputMessage.setCode("200");
-                outputMessage.setMessage("succesful operation");
             }
-        } finally {
-            MessageWrapper.build(httpExchange.getResponseBody(), userMod);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
 
-    private LinkedHashSet<Role> getRoles(String roles) throws UnsupportedEncodingException {
+    private LinkedHashSet<String> getRoles(String roles) throws UnsupportedEncodingException {
 
         String param2After = roles.replace("%2C", ",");
 
@@ -98,8 +128,8 @@ public class UserHandler implements HttpHandler {
                 Stream.of(param2After.split(","))
                         .collect(Collectors.toList());
 
-        final LinkedHashSet<Role> rolesSet = new LinkedHashSet<>();
-        roleList.stream().forEach(role -> rolesSet.add(Role.build(role)));
+        final LinkedHashSet<String> rolesSet = new LinkedHashSet<>();
+        roleList.stream().forEach(role -> rolesSet.add(role));
         return rolesSet;
     }
 }

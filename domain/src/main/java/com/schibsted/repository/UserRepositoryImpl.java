@@ -25,25 +25,25 @@ public class UserRepositoryImpl implements IUserRepository {
         Role role3 = Role.build(Constants.PAGE_3);
         Role roleAdmin = Role.build(Constants.ADMIN);
 
-        LinkedHashSet<Role> role = new LinkedHashSet<Role>();
-        role.add(role1);
+        LinkedHashSet<String> role = new LinkedHashSet<String>();
+        role.add(Constants.PAGE_1);
         User userPage1 = User.build("edu", "12345", role);
 
         userList.add(userPage1);
 
-        role = new LinkedHashSet<Role>();
-        role.add(role2);
+        role = new LinkedHashSet<String>();
+        role.add(Constants.PAGE_2);
         User userPage2 = User.build("toni", "5678", role);
 
         userList.add(userPage2);
 
-        role = new LinkedHashSet<Role>();
-        role.add(role3);
+        role = new LinkedHashSet<String>();
+        role.add(Constants.PAGE_3);
         User userPage3 = User.build("juan", "7788", role);
 
         userList.add(userPage3);
-        role = new LinkedHashSet<Role>();
-        role.add(roleAdmin);
+        role = new LinkedHashSet<String>();
+        role.add(Constants.ADMIN);
         User userAdmin = User.build("admin", "admin", role);
 
         userList.add(userAdmin);

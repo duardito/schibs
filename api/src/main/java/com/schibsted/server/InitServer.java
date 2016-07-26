@@ -11,9 +11,15 @@ import java.net.InetSocketAddress;
  */
 public class InitServer {
 
+    private static HttpServer server;
+
     public static void startServer() throws IOException {
-        HttpServer server = HttpServer.create(new InetSocketAddress(15000), 0);
+        server = HttpServer.create(new InetSocketAddress(15000), 0);
         server.createContext("/", new SwitchHandler());
         server.start();
+    }
+
+    public static void stopServer() throws IOException {
+        server.stop(1);
     }
 }

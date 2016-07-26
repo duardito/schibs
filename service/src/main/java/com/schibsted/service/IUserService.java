@@ -11,9 +11,9 @@ public interface IUserService {
 
     Optional<User> loadUserByUsernameAndPassword(String username, String password);
 
-    User save(User user);
+    Optional<User> save(User user);
 
-    User update(User userUpdate);
+    Optional<User> update(User userUpdate);
 
     Optional<User> findByUsername(String username);
 }

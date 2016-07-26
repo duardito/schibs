@@ -3,23 +3,26 @@ package com.schibsted.server.exception;
 import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Optional;
 
 /**
  * Created by edu on 24/07/2016.
  */
 public class MessageWrapper {
 
-    public static MessageWrapper build(OutputStream out, OutputMessage outputMessage) throws IOException {
+    public static MessageWrapper build(OutputStream out, Optional <?> outputMessage) throws IOException {
         return new MessageWrapper(out, outputMessage);
     }
 
-    private MessageWrapper(OutputStream out, OutputMessage outputMessage) throws IOException {
+    private MessageWrapper(OutputStream out, Optional <?> outputMessage) throws IOException {
         final Gson gson = new Gson();
-        final ObjectOutputStream objOut = new ObjectOutputStream(out);
-        objOut.writeObject(gson.toJson(outputMessage));
-        objOut.close();
+        Writer w = new OutputStreamWriter(out);
+        w.write(gson.toJson(outputMessage));
+        w.flush();
+        w.close();
     }
 
 

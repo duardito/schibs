@@ -18,6 +18,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +43,7 @@ public class UserHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
 
         OutputMessage outputMessage = null;
+        Optional <User> userMod = null;
         try {
             final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
             final String access = accessUtils.loginUser(authorization);
@@ -64,14 +66,15 @@ public class UserHandler implements HttpHandler {
 
                 final User user = User.build(username, password, getRoles(roles));
 
+
                 final String methodType = httpExchange.getRequestMethod();
 
                 if ("POST".equals(methodType)) {
-                    userService.save(user);
+                    userMod = userService.save(user);
                 } else if ("PUT".equals(methodType)) {
-                    userService.update(user);
+                    userMod =userService.update(user);
                 } else if ("GET".equals(methodType)) {
-                    userService.findByUsername(user.getUsername());
+                    userMod =userService.findByUsername(user.getUsername());
                 } else {
                     //delete not implemented
                 }
@@ -82,7 +85,7 @@ public class UserHandler implements HttpHandler {
                 outputMessage.setMessage("succesful operation");
             }
         } finally {
-            MessageWrapper.build(httpExchange.getResponseBody(), outputMessage);
+            MessageWrapper.build(httpExchange.getResponseBody(), userMod);
         }
     }
 

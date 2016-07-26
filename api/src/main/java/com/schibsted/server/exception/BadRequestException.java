@@ -8,11 +8,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * Created by edu on 26/07/2016.
+ * Created by edu on 26/7/16.
  */
-public class UnathorizedException extends MessageWrapper {
+public class BadRequestException extends MessageWrapper {
 
-    public UnathorizedException(OutputStream out) throws IOException {
-        super(out, OutputMessage.build(Constants.UNATHORIZED_CODE,Constants.UNATHORIZED) );
+    public BadRequestException(OutputStream out) throws IOException {
+        super(out, OutputMessage.build(Constants.BAD_REQUEST_CODE,Constants.BAD_REQUEST) );
     }
 }

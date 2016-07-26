@@ -1,6 +1,10 @@
 package com.schibsted.server.handler;
 
+import com.schibsted.common.Constants;
 import com.schibsted.domain.user.User;
+import com.schibsted.server.beans.UserCompleteResponse;
+import com.schibsted.server.beans.UserReadResponse;
+import com.schibsted.server.exception.BadRequestException;
 import com.schibsted.server.exception.UnathorizedException;
 import com.schibsted.server.messages.user.UserUpdatedOrCreated;
 import com.schibsted.server.messages.user.UserfieldsRequired;
@@ -60,12 +64,12 @@ public class UserHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) {
 
-        Optional<User> userMod = null;
+        User userMod = null;
         try {
             final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
             final Optional<User> access = accessUtils.loginUser(authorization);
             if (!access.isPresent()) {
-                httpExchange.sendResponseHeaders(403, 0);
+                httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
                 new UnathorizedException(httpExchange.getResponseBody());
             } else {
 
@@ -73,40 +77,16 @@ public class UserHandler implements HttpHandler {
 
                 if ("POST".equals(methodType)) {
 
-
-                    if (!accessUtils.hasAdminPermissions(access.get())) {
-                        httpExchange.sendResponseHeaders(403, 0);
-                        new UnathorizedException(httpExchange.getResponseBody());
-
-                    } else {
-                        final User user = buildUserFromRequest(httpExchange);
-
-                        if(validateFields(user)){
-                            userMod = userService.save(user);
-                            httpExchange.sendResponseHeaders(200, 0);
-                            new UserUpdatedOrCreated(httpExchange.getResponseBody(), userMod.get());
-                        }else{
-                            httpExchange.sendResponseHeaders(400, 0);
-                            new UserfieldsRequired(httpExchange.getResponseBody());
-                        }
-                    }
+                    executePost(httpExchange, access);
 
                 } else if ("PUT".equals(methodType)) {
 
-                    if (!accessUtils.hasAdminPermissions(access.get())) {
-                        httpExchange.sendResponseHeaders(403, 0);
-                        new UnathorizedException(httpExchange.getResponseBody());
-
-                    } else {
-                        final User user = buildUserFromRequest(httpExchange);
-                        userMod = userService.update(user);
-                        httpExchange.sendResponseHeaders(200, 0);
-                        new UserUpdatedOrCreated(httpExchange.getResponseBody(), userMod.get());
-                    }
+                    executePut(httpExchange, access);
 
                 } else if ("GET".equals(methodType)) {
 
-                    //userMod =userService.findByUsername(user.getUsername());
+                    executeGet(httpExchange);
+
                 } else {
                     //delete not implemented
                 }
@@ -119,10 +99,68 @@ public class UserHandler implements HttpHandler {
         }
     }
 
+    private void executeGet(HttpExchange httpExchange) throws IOException {
+
+        final String path = httpExchange.getRequestURI().getPath();
+        final String[] pathVariable = path.split("/user/");
+        if(pathVariable.length < 2){
+            httpExchange.sendResponseHeaders(Constants.BAD_REQUEST_CODE, 0);
+            new BadRequestException(httpExchange.getResponseBody());
+        }else{
+            final String username = pathVariable[1];
+            final Optional<User> userMod = userService.findByUsername(username);
+            if(userMod.isPresent()){
+                httpExchange.sendResponseHeaders(Constants.OPERATION_OK, 0);
+                new UserUpdatedOrCreated(httpExchange.getResponseBody(), new UserReadResponse(userMod.get()));
+            }
+        }
+
+    }
+
+    private void executePut(HttpExchange httpExchange, Optional<User> access) throws IOException {
+        if (!accessUtils.hasAdminPermissions(access.get())) {
+            httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
+            new UnathorizedException(httpExchange.getResponseBody());
+
+        } else {
+            final User user = buildUserFromRequest(httpExchange);
+            final Optional<User> userMod = userService.update(user);
+            if(userMod.isPresent()){
+                httpExchange.sendResponseHeaders(Constants.OPERATION_OK, 0);
+                new UserUpdatedOrCreated(httpExchange.getResponseBody(),
+                        new UserCompleteResponse(userMod.get()));
+            }
+        }
+    }
+
+    private void executePost(HttpExchange httpExchange, Optional<User> access) throws IOException {
+
+        if (!accessUtils.hasAdminPermissions(access.get())) {
+            httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
+            new UnathorizedException(httpExchange.getResponseBody());
+
+        } else {
+            final User user = buildUserFromRequest(httpExchange);
+
+            if(validateFields(user)){
+                final Optional<User>  userMod = userService.save(user);
+                if(userMod.isPresent()){
+                    httpExchange.sendResponseHeaders(Constants.OPERATION_OK, 0);
+                    new UserUpdatedOrCreated(httpExchange.getResponseBody(),
+                            new UserCompleteResponse(userMod.get()));
+                }
+
+            }else{
+                httpExchange.sendResponseHeaders(Constants.BAD_REQUEST_CODE, 0);
+                new UserfieldsRequired(httpExchange.getResponseBody());
+            }
+        }
+    }
+
 
     private LinkedHashSet<String> getRoles(String roles) throws UnsupportedEncodingException {
 
-        String param2After = roles.replace("%2C", ",");
+        final String param2After = roles.replace("%2C", ",");
 
         final List<String> roleList =
                 Stream.of(param2After.split(","))

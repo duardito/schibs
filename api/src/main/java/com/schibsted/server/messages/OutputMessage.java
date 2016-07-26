@@ -5,23 +5,23 @@ package com.schibsted.server.messages;
  */
 public class OutputMessage {
 
-    public static OutputMessage build(String code, String message){
+    public static OutputMessage build(int code, String message){
         return  new OutputMessage(code, message);
     }
 
-    private OutputMessage(String code, String message) {
+    private OutputMessage(int code, String message) {
         this.code = code;
         this.message = message;
     }
 
-    private String code;
+    private int code;
     private String message;
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

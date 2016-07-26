@@ -18,7 +18,7 @@ public class SwitchHandler implements HttpHandler {
         //LOGIN OPERATION
         if(subPath.endsWith("login")){
             new LoginHandler().handle(httpExchange);
-        }else if(subPath.endsWith("user")){
+        }else if(subPath.contains("user")){
             new UserHandler().handle(httpExchange);
         }
     }

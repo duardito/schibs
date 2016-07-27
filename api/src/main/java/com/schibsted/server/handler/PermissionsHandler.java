@@ -7,12 +7,18 @@ import com.schibsted.server.exception.UnathorizedException;
 import com.schibsted.server.exception.UserAlreadyExistsException;
 import com.schibsted.server.exception.UserHasNotPermissionsException;
 import com.schibsted.server.exception.UserNotFoundException;
-import com.schibsted.server.security.SecurityUtils;
+import com.schibsted.server.utils.Utils;
 import com.schibsted.service.IUserService;
 import com.schibsted.service.UserServiceImpl;
 import com.sun.net.httpserver.HttpExchange;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.DelayQueue;
 
@@ -21,9 +27,45 @@ import java.util.concurrent.DelayQueue;
  */
 public abstract class PermissionsHandler {
 
-    protected SecurityUtils accessUtils;
     protected IUserService userService;
     protected static DelayQueue<UserDelay> userDelayedList= new DelayQueue<UserDelay>();
+
+    public PermissionsHandler(){
+        if (userService == null) {
+            userService = new UserServiceImpl();
+        }
+    }
+
+    private String getUsernameFromAuthorization(final String[] values){
+        return values[0];
+    }
+
+    private String getPasswordFromAuthorization(final String[] values){
+        return values[1];
+    }
+
+    public String [] getCredentials(final String authorization){
+        return getDecryptedCreadentials(authorization);
+    }
+
+    protected Optional<User> loginUser(final String authorization) {
+
+        final String[] values = getCredentials(authorization);
+        final String usernameLogin = getUsernameFromAuthorization(values);
+        final String passwdLogin = getPasswordFromAuthorization(values);
+        return userService.loadUserByUsernameAndPassword(usernameLogin, passwdLogin);
+    }
+
+    private String[] getDecryptedCreadentials(String authorization) {
+        final String base64Credentials = authorization.substring(("Basic".length() + 1), authorization.length() - 1);
+        final String credentials = new String(Base64.getDecoder().decode(base64Credentials.trim()),
+                Charset.forName("UTF-8"));
+        return credentials.split(":", 2);
+    }
+
+    protected boolean hasAdminPermissions(User user) {
+        return user.getRoles().contains(Constants.ADMIN);
+    }
 
     static{
         removeUser();
@@ -44,14 +86,11 @@ public abstract class PermissionsHandler {
         new Thread(task2).start();
     }
 
-
-
     protected void usersInDelay(Optional<User> loggedUser) {
         if (userDelayedList.isEmpty()) {
             userDelayedList.offer(UserDelay.build(loggedUser.get()));
         } else {
-            final Optional<UserDelay> delay = userDelayedList.stream()
-                    .filter(userDelay -> userDelay.getUser().getUsername().equals(loggedUser.get().getUsername())).findAny();
+            final Optional<UserDelay> delay = getUserDelay(loggedUser.get().getUsername());
             if (!delay.isPresent()) {
                 userDelayedList.offer(UserDelay.build(loggedUser.get()));
             } else {
@@ -60,31 +99,41 @@ public abstract class PermissionsHandler {
         }
     }
 
-    protected void resetDelayTime(Optional<UserDelay> delay) {
+    private Optional<UserDelay> getUserDelay(final String username) {
+        return userDelayedList.stream()
+                        .filter(userDelay -> userDelay.getUser().getUsername().equals(username)).findAny();
+    }
+
+    protected void resetDelayTime(final Optional<UserDelay> delay) {
         delay.get().setDelayTime(System.currentTimeMillis() + Constants._DELAYTIME);
     }
 
 
-    public PermissionsHandler(){
-        if (accessUtils == null) {
-            accessUtils = new SecurityUtils();
-        }
-        if (userService == null) {
-            userService = new UserServiceImpl();
-        }
-    }
 
     public static DelayQueue<UserDelay> getUserDelayedList() {
         return userDelayedList;
     }
 
-    public static void setUserDelayedList(DelayQueue<UserDelay> userDelayedList) {
-        PermissionsHandler.userDelayedList = userDelayedList;
+
+    protected Map<String, String> getParamsMap(HttpExchange httpExchange) throws IOException {
+        final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
+        final BufferedReader br = new BufferedReader(isr);
+        final String query = br.readLine();
+        return Utils.queryToMap(query);
     }
 
-
     protected Optional<User> getUserAuthorization(HttpExchange httpExchange, String authorization) throws Exception {
-        final Optional<User> access = accessUtils.loginUser(authorization);
+
+        final String[] values = getCredentials(authorization);
+        final String usernameLogin = getUsernameFromAuthorization(values);
+        Optional<UserDelay> userInDelay = getUserDelay(usernameLogin);
+        if(!userInDelay.isPresent()){
+            httpExchange.sendResponseHeaders(Constants.NOT_LOGGED_IN_CODE, 0);
+            throw new UnathorizedException(httpExchange.getResponseBody());
+        }
+
+        final Optional<User> access = loginUser(authorization);
+
         if (!access.isPresent()) {
             httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
             throw new UnathorizedException(httpExchange.getResponseBody());
@@ -119,7 +168,7 @@ public abstract class PermissionsHandler {
     }
 
     protected void hashPermissions(final HttpExchange httpExchange,final  Optional<User> access) throws Exception {
-        if (!accessUtils.hasAdminPermissions(access.get())) {
+        if (!hasAdminPermissions(access.get())) {
             httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
             throw new UnathorizedException(httpExchange.getResponseBody());
         }

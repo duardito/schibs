@@ -90,12 +90,14 @@ public abstract class BaseTest {
 
     private List<NameValuePair> getParams(final Map<String, String> map) {
         final List<NameValuePair> params = new ArrayList<NameValuePair>(0);
-        final Iterator entries = map.entrySet().iterator();
-        while (entries.hasNext()) {
-            final Map.Entry thisEntry = (Map.Entry) entries.next();
-            final String key = thisEntry.getKey().toString();
-            final String value = thisEntry.getValue().toString();
-            params.add(new BasicNameValuePair(key, value));
+        if(map != null){
+            final Iterator entries = map.entrySet().iterator();
+            while (entries.hasNext()) {
+                final Map.Entry thisEntry = (Map.Entry) entries.next();
+                final String key = thisEntry.getKey().toString();
+                final String value = thisEntry.getValue().toString();
+                params.add(new BasicNameValuePair(key, value));
+            }
         }
         return params;
     }

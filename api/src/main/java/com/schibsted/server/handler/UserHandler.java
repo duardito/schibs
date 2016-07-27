@@ -9,13 +9,10 @@ import com.schibsted.server.exception.BadRequestException;
 import com.schibsted.server.exception.UpdateNotAllowedException;
 import com.schibsted.server.messages.user.UserUpdatedOrCreated;
 import com.schibsted.server.messages.user.UserfieldsRequired;
-import com.schibsted.server.utils.Utils;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,10 +24,8 @@ import java.util.stream.Stream;
 public class UserHandler extends PermissionsHandler implements HttpHandler {
 
     private User buildUserFromRequest(final HttpExchange httpExchange) throws IOException {
-        final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
-        final BufferedReader br = new BufferedReader(isr);
-        final String query = br.readLine();
-        final Map<String, String> queryMap = Utils.queryToMap(query);
+
+        final Map<String, String> queryMap = getParamsMap(httpExchange);
 
         final String username = queryMap.get("username");
         final String password = queryMap.get("password");

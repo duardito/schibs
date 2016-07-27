@@ -7,6 +7,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetPageTest extends BasePageTest{
 
@@ -53,7 +55,14 @@ public class GetPageTest extends BasePageTest{
     public void getAccessPage1NoPermissionsNO_OK() throws IOException {
 
         String toni = "toni";
+        String password ="5678";
         String url = "http://localhost:15000/"+USER_PAGE_1;
+
+        Map<String, String> map = new HashMap<>();
+        map.put("username", toni);
+        map.put("password", password);
+        getJsonResponsePost("http://localhost:15000/login", map, toni, password);
+
 
         JsonObject response = getJsonResponseGet(url, toni, "5678");
         JsonElement code = response.get("code");

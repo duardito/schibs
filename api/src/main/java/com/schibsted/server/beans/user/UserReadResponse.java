@@ -1,4 +1,4 @@
-package com.schibsted.server.beans;
+package com.schibsted.server.beans.user;
 
 import com.schibsted.domain.user.User;
 import com.schibsted.server.beans.base.BaseUserResponse;

@@ -1,4 +1,4 @@
-package com.schibsted.server.messages.user;
+package com.schibsted.server.messages.base;
 
 import com.google.gson.Gson;
 

@@ -2,6 +2,7 @@ package com.schibsted.server.handler;
 
 import com.schibsted.common.Constants;
 import com.schibsted.domain.user.User;
+import com.schibsted.domain.user.UserDelay;
 import com.schibsted.server.beans.user.UserCompleteResponse;
 import com.schibsted.server.beans.user.UserReadResponse;
 import com.schibsted.server.exception.BadRequestException;
@@ -67,6 +68,9 @@ public class UserHandler extends PermissionsHandler implements HttpHandler {
             } else {
                 //delete not implemented
             }
+
+            final Optional <UserDelay> option = Optional.of(UserDelay.build(access.get()));
+            resetDelayTime(option);
 
         } catch (Exception e) {
 

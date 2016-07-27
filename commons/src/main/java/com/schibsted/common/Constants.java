@@ -30,5 +30,8 @@ public class Constants {
     public static final String USER_HAS_NOT_PERMISSIONS = "User has not permissions";
     public static final String NOT_LOGGED_IN = "User not logged in";
 
+    //5 minutes
+    public static final int _DELAYTIME = 5 * 60000;
+
 
 }

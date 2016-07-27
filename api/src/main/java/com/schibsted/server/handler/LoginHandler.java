@@ -15,24 +15,39 @@ import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.Optional;
 
-public class LoginHandler implements HttpHandler {
+public class LoginHandler extends PermissionsHandler implements HttpHandler {
 
 
     private IUserService userService;
 
     public LoginHandler() {
-        if(userService == null){
+        if (userService == null) {
             userService = new UserServiceImpl();
         }
     }
 
+    /*
+    private User buildUserFromRequest(final HttpExchange httpExchange) throws IOException {
+        final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
+        final BufferedReader br = new BufferedReader(isr);
+        final String query = br.readLine();
+        final Map<String, String> queryMap = Utils.queryToMap(query);
+
+        final String username = queryMap.get("username");
+        final String password = queryMap.get("password");
+        final String roles = queryMap.get("roles");
+
+        return User.build(username, password, getRoles(roles));
+    }
+*/
+
     public void handle(HttpExchange httpExchange) throws IOException {
 
         Headers responseHeaders = httpExchange.getResponseHeaders();
-        responseHeaders.set("Content-Type","application/x-www-form-urlencoded");
+        responseHeaders.set("Content-Type", "application/x-www-form-urlencoded");
         //responseHeaders.set("Content-Type","application/json");
 
-        InputStreamReader isr =  new InputStreamReader(httpExchange.getRequestBody(),"utf-8");
+        InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
         BufferedReader br = new BufferedReader(isr);
         String query = br.readLine();
         final Map<String, String> queryMap = Utils.queryToMap(query);
@@ -40,12 +55,20 @@ public class LoginHandler implements HttpHandler {
         final String username = queryMap.get("username");
         final String password = queryMap.get("password");
 
-       Optional <User> loggedUser = userService.loadUserByUsernameAndPassword(username, password);
+        final Optional<User> loggedUser = userService.loadUserByUsernameAndPassword(username, password);
 
-        httpExchange.sendResponseHeaders(200, 0);
+        try {
+            checkUserNotExists(httpExchange, username);
+            usersInDelay(loggedUser);
 
-        ObjectOutputStream objOut = new     ObjectOutputStream(httpExchange.getResponseBody());
-        objOut.writeObject(loggedUser);
-        objOut.close();
+            httpExchange.sendResponseHeaders(200, 0);
+            ObjectOutputStream objOut = new ObjectOutputStream(httpExchange.getResponseBody());
+            objOut.writeObject(loggedUser.get());
+            objOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+
+
 }

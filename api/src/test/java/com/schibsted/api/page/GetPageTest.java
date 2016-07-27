@@ -1,11 +1,17 @@
 package com.schibsted.api.page;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.schibsted.common.Constants;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 
-public class GetPageTest extends BasePageTest {
+public class GetPageTest extends BasePageTest{
+
+        private static final String JUAN ="juan";
+        private static final String JUAN_PASSWORD ="7788";
 
 
     /*
@@ -31,7 +37,57 @@ public class GetPageTest extends BasePageTest {
 
     @Test
     public void getAccessPage1_OK() throws IOException {
-        JsonObject response = getJsonResponseGet("http://localhost:15000/Page%201", "edu", "12345");
-        System.out.println(response);
+
+        String edu = "edu";
+        String url = "http://localhost:15000/"+USER_PAGE_1;
+
+        JsonObject response = getJsonResponseGet(url, edu, "12345");
+        JsonElement pagename = response.get("pagename");
+        JsonElement username = response.get("username");
+
+        Assert.assertEquals(username.getAsString(), edu);
+        Assert.assertEquals(pagename.getAsString(), USER_PAGE_1);
     }
+
+    @Test
+    public void getAccessPage1NoPermissionsNO_OK() throws IOException {
+
+        String toni = "toni";
+        String url = "http://localhost:15000/"+USER_PAGE_1;
+
+        JsonObject response = getJsonResponseGet(url, toni, "5678");
+        JsonElement code = response.get("code");
+        JsonElement message = response.get("message");
+
+        Assert.assertEquals(code.getAsInt(), Constants.UNATHORIZED_CODE);
+        Assert.assertEquals(message.getAsString(), Constants.USER_HAS_NOT_PERMISSIONS);
+    }
+
+
+    @Test
+    public void getAccessPage2_same_user_juan() throws IOException {
+
+        String url = "http://localhost:15000/"+USER_PAGE_2;
+
+        JsonObject response = getJsonResponseGet(url, JUAN, JUAN_PASSWORD);
+        JsonElement pagename = response.get("pagename");
+        JsonElement username = response.get("username");
+
+        Assert.assertEquals(username.getAsString(), JUAN);
+        Assert.assertEquals(pagename.getAsString(), USER_PAGE_2);
+    }
+
+    @Test
+    public void getAccessPage3_same_user_juan() throws IOException {
+
+        String url = "http://localhost:15000/"+USER_PAGE_3;
+
+        JsonObject response = getJsonResponseGet(url, JUAN, JUAN_PASSWORD);
+        JsonElement pagename = response.get("pagename");
+        JsonElement username = response.get("username");
+
+        Assert.assertEquals(username.getAsString(), JUAN);
+        Assert.assertEquals(pagename.getAsString(), USER_PAGE_3);
+    }
+
 }

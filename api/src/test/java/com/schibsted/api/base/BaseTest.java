@@ -40,10 +40,14 @@ public abstract class BaseTest {
         return Base64.getEncoder().encodeToString(message);
     }
 
+    private String replaceCharacters(String url){
+        return url.replace(" ", "%20");
+    }
+
     protected JsonObject getJsonResponseGet(final String url,final String username,final String password) throws IOException {
 
         final DefaultHttpClient httpclient = new DefaultHttpClient();
-        final HttpGet post = new HttpGet(url);
+        final HttpGet post = new HttpGet( replaceCharacters(url) );
         post.setHeader("Authorization", "Basic " + encodeUserLogin(username, password));
         final HttpResponse response = httpclient.execute(post);
         final HttpEntity entity = response.getEntity();
@@ -53,7 +57,7 @@ public abstract class BaseTest {
     protected JsonObject getJsonResponsePut(final String url, final Map<String, String> mapParams,final String username,final String password) throws IOException {
 
         final DefaultHttpClient httpclient = new DefaultHttpClient();
-        final HttpPut post = new HttpPut(url);
+        final HttpPut post = new HttpPut(replaceCharacters(url));
         post.setHeader("Authorization", "Basic " + encodeUserLogin(username, password));
         final List<NameValuePair> params = getParams(mapParams);
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
@@ -65,7 +69,7 @@ public abstract class BaseTest {
     protected JsonObject getJsonResponsePost(final String url, final Map<String, String> mapParams, String username, String password) throws IOException {
 
         final DefaultHttpClient httpclient = new DefaultHttpClient();
-        final HttpPost post = new HttpPost(url);
+        final HttpPost post = new HttpPost(replaceCharacters(url));
         post.setHeader("Authorization", "Basic " + encodeUserLogin(username, password));
         final List<NameValuePair> params = getParams(mapParams);
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));

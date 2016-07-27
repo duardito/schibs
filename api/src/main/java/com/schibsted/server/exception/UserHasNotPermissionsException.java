@@ -12,6 +12,6 @@ import java.io.OutputStream;
 public class UserHasNotPermissionsException extends MessageWrapperException {
 
     public UserHasNotPermissionsException(OutputStream out) throws Exception {
-        super(out, OutputMessage.build(Constants.CONFLICT_CODE,Constants.USER_NOT_FOUND) );
+        super(out, OutputMessage.build(Constants.UNATHORIZED_CODE,Constants.USER_HAS_NOT_PERMISSIONS) );
     }
 }

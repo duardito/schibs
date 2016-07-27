@@ -8,9 +8,9 @@ import com.schibsted.server.beans.base.BaseUserResponse;
  */
 public class UserCompleteResponse extends BaseUserResponse {
 
-    public UserCompleteResponse(final User user){
+    public UserCompleteResponse(final User user) {
         super(user.getUsername(), user.getRoles());
-        this.password=user.getPassword();
+        this.password = user.getPassword();
     }
 
     private String password;

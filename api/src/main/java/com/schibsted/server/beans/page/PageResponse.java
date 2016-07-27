@@ -1,13 +1,29 @@
 package com.schibsted.server.beans.page;
 
-import com.schibsted.server.beans.base.BaseUserResponse;
 
-/**
- * Created by edu on 27/7/16.
- */
-public class PageResponse extends BaseUserResponse {
+public  class PageResponse  {
 
-    public PageResponse(String username) {
-        super(username);
+    public PageResponse(String pagename, String username) {
+        this.pagename = pagename;
+        this.username = username;
+    }
+
+    private String pagename;
+    private String username;
+
+    public String getPagename() {
+        return pagename;
+    }
+
+    public void setPagename(String pagename) {
+        this.pagename = pagename;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

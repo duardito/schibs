@@ -1,6 +1,6 @@
 package com.schibsted.server.messages;
 
-import com.schibsted.server.messages.user.BaseMessageWrapper;
+import com.schibsted.server.messages.base.BaseMessageWrapper;
 
 import java.io.IOException;
 import java.io.OutputStream;

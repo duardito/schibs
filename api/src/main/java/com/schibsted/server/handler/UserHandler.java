@@ -2,15 +2,13 @@ package com.schibsted.server.handler;
 
 import com.schibsted.common.Constants;
 import com.schibsted.domain.user.User;
-import com.schibsted.server.beans.UserCompleteResponse;
-import com.schibsted.server.beans.UserReadResponse;
-import com.schibsted.server.exception.*;
+import com.schibsted.server.beans.user.UserCompleteResponse;
+import com.schibsted.server.beans.user.UserReadResponse;
+import com.schibsted.server.exception.BadRequestException;
+import com.schibsted.server.exception.UpdateNotAllowedException;
 import com.schibsted.server.messages.user.UserUpdatedOrCreated;
 import com.schibsted.server.messages.user.UserfieldsRequired;
-import com.schibsted.server.security.SecurityUtils;
 import com.schibsted.server.utils.Utils;
-import com.schibsted.service.IUserService;
-import com.schibsted.service.UserServiceImpl;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -25,19 +23,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class UserHandler implements HttpHandler {
-
-    private IUserService userService;
-    private SecurityUtils accessUtils;
-
-    public UserHandler() {
-        if (userService == null) {
-            userService = new UserServiceImpl();
-        }
-        if (accessUtils == null) {
-            accessUtils = new SecurityUtils();
-        }
-    }
+public class UserHandler extends PermissionsHandler implements HttpHandler {
 
     private User buildUserFromRequest(final HttpExchange httpExchange) throws IOException {
         final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
@@ -87,14 +73,7 @@ public class UserHandler implements HttpHandler {
         }
     }
 
-    private Optional<User> getUserAuthorization(HttpExchange httpExchange, String authorization) throws Exception {
-        final Optional<User> access = accessUtils.loginUser(authorization);
-        if (!access.isPresent()) {
-            httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
-            throw new UnathorizedException(httpExchange.getResponseBody());
-        }
-        return access;
-    }
+
 
     private void executeGet(HttpExchange httpExchange) throws Exception {
 
@@ -140,31 +119,7 @@ public class UserHandler implements HttpHandler {
         }
     }
 
-    private void checkUserAlreadyExists(final HttpExchange httpExchange,final String username) throws Exception {
 
-        final Optional<User> userFromBody = userService.findByUsername(username);
-        if (userFromBody.isPresent()) {
-            httpExchange.sendResponseHeaders(Constants.CONFLICT_CODE, 0);
-            throw new UserAlreadyExistsException(httpExchange.getResponseBody());
-        }
-    }
-
-    private Optional<User> checkUserNotExists(final HttpExchange httpExchange,final String username) throws Exception {
-
-        final Optional<User> userFromBody = userService.findByUsername(username);
-        if (!userFromBody.isPresent()) {
-            httpExchange.sendResponseHeaders(Constants.CONFLICT_CODE, 0);
-            throw new UserNotFoundException(httpExchange.getResponseBody());
-        }
-        return userFromBody;
-    }
-
-    private void hashPermissions(final HttpExchange httpExchange,final  Optional<User> access) throws Exception {
-        if (!accessUtils.hasAdminPermissions(access.get())) {
-            httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
-            throw new UnathorizedException(httpExchange.getResponseBody());
-        }
-    }
 
     private void executePost(final HttpExchange httpExchange,final  Optional<User> access) throws Exception {
 
@@ -188,6 +143,7 @@ public class UserHandler implements HttpHandler {
     }
 
     private String replacedCharacters(final String roles){
+
         return roles.replace("%2C", ",");
     }
 

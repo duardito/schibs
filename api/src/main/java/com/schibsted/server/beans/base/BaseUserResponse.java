@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
  */
 public abstract class BaseUserResponse {
 
-
     public BaseUserResponse(String username, LinkedHashSet<String> roles) {
         this.username = username;
         this.roles = roles;

@@ -2,7 +2,9 @@ package com.schibsted.server.handler;
 
 import com.schibsted.common.Constants;
 import com.schibsted.domain.user.User;
+import com.schibsted.server.beans.page.PageResponse;
 import com.schibsted.server.exception.UnathorizedException;
+import com.schibsted.server.messages.page.PageMessageApi;
 import com.schibsted.server.security.SecurityUtils;
 import com.schibsted.service.IUserService;
 import com.schibsted.service.UserServiceImpl;
@@ -13,7 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 
-public class PageHandler implements HttpHandler {
+public class PageHandler extends PermissionsHandler implements HttpHandler {
 
     private IUserService userService;
     private SecurityUtils accessUtils;
@@ -32,21 +34,17 @@ public class PageHandler implements HttpHandler {
         final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
         try {
             //user has not authorization, so it is not logged in
-            if (authorization == null) {
-                httpExchange.sendResponseHeaders(Constants.NOT_LOGGED_IN_CODE, 0);
+            checkAuthorization(httpExchange, authorization);
 
-                throw new UnathorizedException(httpExchange.getResponseBody());
-            }
-            final Optional<User> access = accessUtils.loginUser(authorization);
-            //authorization header is present
-            if (!access.isPresent()) {
-                httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);
-                throw new UnathorizedException(httpExchange.getResponseBody());
+            final Optional<User> access = getUserAuthorization(httpExchange, authorization);
 
-            }
-            final String path = httpExchange.getRequestURI().getPath();
-            userService.userHasPermissionsOnPage(access.get(), path.substring(1, path.length()));
+            String path = httpExchange.getRequestURI().getPath();
+            path = path.substring(1, path.length());
 
+            UserHasPermissionsOnPage(httpExchange, access, path);
+
+            httpExchange.sendResponseHeaders(Constants.OPERATION_OK_CODE, 0);
+            new PageMessageApi(httpExchange.getResponseBody(), new PageResponse(path, access.get().getUsername()));
         } catch (UnathorizedException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -55,4 +53,6 @@ public class PageHandler implements HttpHandler {
 
 
     }
+
+
 }

@@ -1,13 +1,13 @@
 package com.schibsted.repository;
 
 import com.schibsted.common.Constants;
-import com.schibsted.domain.role.Role;
 import com.schibsted.domain.user.User;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by edu on 23/07/2016.
@@ -20,10 +20,7 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     private static void initUsers() {
-        Role role1 = Role.build(Constants.PAGE_1);
-        Role role2 = Role.build(Constants.PAGE_2);
-        Role role3 = Role.build(Constants.PAGE_3);
-        Role roleAdmin = Role.build(Constants.ADMIN);
+
 
         LinkedHashSet<String> role = new LinkedHashSet<String>();
         role.add(Constants.PAGE_1);
@@ -39,9 +36,11 @@ public class UserRepositoryImpl implements IUserRepository {
 
         role = new LinkedHashSet<String>();
         role.add(Constants.PAGE_3);
+        role.add(Constants.PAGE_2);
         User userPage3 = User.build("juan", "7788", role);
 
         userList.add(userPage3);
+
         role = new LinkedHashSet<String>();
         role.add(Constants.ADMIN);
         User userAdmin = User.build("admin", "admin", role);
@@ -84,4 +83,12 @@ public class UserRepositoryImpl implements IUserRepository {
                 .findAny()
                 .orElse(null);
     }
+
+    @Override
+    public List <User> getUserListByPermission(final String permission){
+        return userList.stream()
+                .filter(user -> user.getRoles().contains(permission))
+                .collect(Collectors.toList());
+    }
+
 }

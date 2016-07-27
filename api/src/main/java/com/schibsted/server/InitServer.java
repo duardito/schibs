@@ -6,9 +6,6 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class InitServer {
 
     private static HttpServer server;

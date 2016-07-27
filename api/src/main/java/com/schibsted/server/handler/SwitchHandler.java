@@ -20,6 +20,8 @@ public class SwitchHandler implements HttpHandler {
             new LoginHandler().handle(httpExchange);
         }else if(subPath.contains("user")){
             new UserHandler().handle(httpExchange);
+        }else if(subPath.contains("Page")){
+            new PageHandler().handle(httpExchange);
         }
     }
 }

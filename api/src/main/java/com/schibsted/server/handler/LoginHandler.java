@@ -1,7 +1,7 @@
 package com.schibsted.server.handler;
 
 import com.schibsted.domain.user.User;
-import com.schibsted.server.utils.ParamsUtils;
+import com.schibsted.server.utils.Utils;
 import com.schibsted.service.IUserService;
 import com.schibsted.service.UserServiceImpl;
 import com.sun.net.httpserver.Headers;
@@ -15,9 +15,6 @@ import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class LoginHandler implements HttpHandler {
 
 
@@ -38,7 +35,7 @@ public class LoginHandler implements HttpHandler {
         InputStreamReader isr =  new InputStreamReader(httpExchange.getRequestBody(),"utf-8");
         BufferedReader br = new BufferedReader(isr);
         String query = br.readLine();
-        final Map<String, String> queryMap = ParamsUtils.queryToMap(query);
+        final Map<String, String> queryMap = Utils.queryToMap(query);
 
         final String username = queryMap.get("username");
         final String password = queryMap.get("password");

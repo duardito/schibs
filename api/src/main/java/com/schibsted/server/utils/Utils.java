@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * Created by edu on 23/07/2016.
  */
-public final class ParamsUtils {
+public final class Utils {
 
 
     public static Map<String, String> queryToMap(final String query) {

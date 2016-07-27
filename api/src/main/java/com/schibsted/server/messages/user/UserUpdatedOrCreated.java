@@ -2,7 +2,6 @@ package com.schibsted.server.messages.user;
 
 import com.schibsted.server.messages.MessageWrapper;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -10,7 +9,7 @@ import java.io.OutputStream;
  */
 public class UserUpdatedOrCreated extends MessageWrapper {
 
-    public UserUpdatedOrCreated(OutputStream out, Object o) throws IOException {
+    public UserUpdatedOrCreated(OutputStream out, Object o) throws Exception {
         super(out, o);
     }
 }

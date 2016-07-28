@@ -7,8 +7,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GetPageTest extends BasePageTest{
 
@@ -41,9 +39,14 @@ public class GetPageTest extends BasePageTest{
     public void getAccessPage1_OK() throws IOException {
 
         String edu = "edu";
+        String passwd ="12345";
+
+        JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", edu,passwd);
+        String auth = resp.get("auth").getAsString();
+
         String url = "http://localhost:15000/"+USER_PAGE_1;
 
-        JsonObject response = getJsonResponseGet(url, edu, "12345");
+        JsonObject response = getJsonResponseGet(url, auth);
         JsonElement pagename = response.get("pagename");
         JsonElement username = response.get("username");
 
@@ -51,20 +54,20 @@ public class GetPageTest extends BasePageTest{
         Assert.assertEquals(pagename.getAsString(), USER_PAGE_1);
     }
 
+
     @Test
     public void getAccessPage1NoPermissionsNO_OK() throws IOException {
 
         String toni = "toni";
         String password ="5678";
+
+        JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", toni,password);
+        String auth = resp.get("auth").getAsString();
+
         String url = "http://localhost:15000/"+USER_PAGE_1;
 
-        Map<String, String> map = new HashMap<>();
-        map.put("username", toni);
-        map.put("password", password);
-        getJsonResponsePost("http://localhost:15000/login", map, toni, password);
 
-
-        JsonObject response = getJsonResponseGet(url, toni, "5678");
+        JsonObject response = getJsonResponseGet(url, auth);
         JsonElement code = response.get("code");
         JsonElement message = response.get("message");
 
@@ -76,9 +79,13 @@ public class GetPageTest extends BasePageTest{
     @Test
     public void getAccessPage2_same_user_juan() throws IOException {
 
+
+        JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", JUAN,JUAN_PASSWORD);
+        String auth = resp.get("auth").getAsString();
+
         String url = "http://localhost:15000/"+USER_PAGE_2;
 
-        JsonObject response = getJsonResponseGet(url, JUAN, JUAN_PASSWORD);
+        JsonObject response = getJsonResponseGet(url, auth);
         JsonElement pagename = response.get("pagename");
         JsonElement username = response.get("username");
 
@@ -89,9 +96,12 @@ public class GetPageTest extends BasePageTest{
     @Test
     public void getAccessPage3_same_user_juan() throws IOException {
 
+        JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", JUAN,JUAN_PASSWORD);
+        String auth = resp.get("auth").getAsString();
+
         String url = "http://localhost:15000/"+USER_PAGE_3;
 
-        JsonObject response = getJsonResponseGet(url, JUAN, JUAN_PASSWORD);
+        JsonObject response = getJsonResponseGet(url, auth);
         JsonElement pagename = response.get("pagename");
         JsonElement username = response.get("username");
 

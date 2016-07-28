@@ -22,8 +22,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public Optional<User> loadUserByUsernameAndPassword(final String username, String password) {
-        return Optional.ofNullable(userRepository.loadUserByUsernameAndPassword(username, password));
+    public User loadUserByUsernameAndPassword(final String username, String password) {
+        return userRepository.loadUserByUsernameAndPassword(username, password);
     }
 
     @Override

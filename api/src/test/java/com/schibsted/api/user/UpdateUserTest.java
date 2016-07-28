@@ -15,6 +15,7 @@ public class UpdateUserTest extends BaseUserTest {
     @Test
     public void updateUserOK() throws IOException {
 
+
         final String modPassword = "admin1234";
         final String usernameInit = "edu";
 
@@ -22,7 +23,7 @@ public class UpdateUserTest extends BaseUserTest {
         map.put("username", usernameInit);
         map.put("password", modPassword);
         map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePut("http://localhost:15000/user", map, USERNAME_ADMIN, PASSWORD_ADMIN);
+        JsonObject response = getJsonResponsePut("http://localhost:15000/user", map, login());
         JsonElement username = response.get("username");
         JsonElement password = response.get("password");
 
@@ -31,31 +32,14 @@ public class UpdateUserTest extends BaseUserTest {
     }
 
     @Test
-    public void updateUserFailingloginNO_OK() throws IOException {
-
-        final String modPassword = "admin1234";
-        final String usernameInit = "edu";
-
-        Map<String, String> map = new HashMap<>();
-        map.put("username", usernameInit);
-        map.put("password", modPassword);
-        map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePut("http://localhost:15000/user", map, USERNAME_ADMIN, "1234");
-        JsonElement code = response.get("code");
-        JsonElement message = response.get("message");
-
-        Assert.assertEquals(code.getAsInt(), Constants.UNATHORIZED_CODE);
-        Assert.assertEquals(message.getAsString(), Constants.UNATHORIZED);
-    }
-
-    @Test
     public void updateUserFailOnlyOneAdminNO_OK() throws IOException {
+
 
         Map<String, String> map = new HashMap<>();
         map.put("username", USERNAME_ADMIN);
         map.put("password", PASSWORD_ADMIN);
         map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePut("http://localhost:15000/user", map, USERNAME_ADMIN, PASSWORD_ADMIN);
+        JsonObject response = getJsonResponsePut("http://localhost:15000/user", map, login());
         JsonElement code = response.get("code");
         JsonElement message = response.get("message");
 

@@ -15,26 +15,27 @@ public class AddUserTest extends BaseUserTest{
     @Test
     public void addUserFailingloginNO_OK() throws IOException {
 
-        Map<String, String> map = new HashMap<>();
-        map.put("username", NEW_USERNAME_ADMIN);
-        map.put("password", NEW_PASSWORD_ADMIN);
-        map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, USERNAME_ADMIN, "1234");
+        JsonObject response= getJsonResponsePostForLogin("http://localhost:15000/login",  USERNAME_ADMIN, "1234");
+
         JsonElement code = response.get("code");
         JsonElement message = response.get("message");
 
         Assert.assertEquals(code.getAsInt(), Constants.UNATHORIZED_CODE);
-        Assert.assertEquals(message.getAsString(), Constants.UNATHORIZED);
+        Assert.assertEquals(message.getAsString(), Constants.USER_NOT_FOUND);
     }
 
     @Test
     public void addUserWithoutPermissionsNO_OK() throws IOException {
 
+        JsonObject res = getJsonResponsePostForLogin("http://localhost:15000/login", "edu", "12345");
+        String auth = res.get("auth").getAsString();
+
         Map<String, String> map = new HashMap<>();
         map.put("username", NEW_USERNAME_ADMIN);
         map.put("password", NEW_PASSWORD_ADMIN);
         map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, "edu", "12345");
+
+        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, auth);
         JsonElement code = response.get("code");
         JsonElement message = response.get("message");
 
@@ -43,15 +44,14 @@ public class AddUserTest extends BaseUserTest{
     }
 
 
+
     @Test
     public void addUserBadRequestNO_OK() throws IOException {
 
-        final String usernameInit = "edu";
 
-        Map<String, String> map = new HashMap<>();
-        map.put("username", usernameInit);
-        map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, USERNAME_ADMIN, PASSWORD_ADMIN);
+        Map<String, String>map = new HashMap<>();
+        map.put("username", USERNAME_ADMIN);
+        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, login());
 
         JsonElement code = response.get("code");
         JsonElement message = response.get("message");
@@ -67,7 +67,7 @@ public class AddUserTest extends BaseUserTest{
         map.put("username", NEW_USERNAME_ADMIN);
         map.put("password", NEW_PASSWORD_ADMIN);
         map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, USERNAME_ADMIN, PASSWORD_ADMIN);
+        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, login());
         JsonElement username = response.get("username");
         JsonElement password = response.get("password");
 
@@ -78,11 +78,12 @@ public class AddUserTest extends BaseUserTest{
     @Test
     public void addUserAlreadyExistsNO_OK() throws IOException {
 
+
         Map<String, String> map = new HashMap<>();
         map.put("username", USERNAME_ADMIN);
         map.put("password", PASSWORD_ADMIN);
         map.put("roles", "PAGE_1,PAGE_2");
-        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, USERNAME_ADMIN, PASSWORD_ADMIN);
+        JsonObject response = getJsonResponsePost("http://localhost:15000/user", map, login());
 
         JsonElement code = response.get("code");
         JsonElement message = response.get("message");

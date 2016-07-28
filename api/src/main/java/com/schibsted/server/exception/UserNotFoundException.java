@@ -12,6 +12,6 @@ import java.io.OutputStream;
 public class UserNotFoundException extends MessageWrapperException {
 
     public UserNotFoundException(OutputStream out) throws Exception {
-        super(out, OutputMessage.build(Constants.CONFLICT_CODE,Constants.USER_NOT_FOUND) );
+        super(out, OutputMessage.build(Constants.UNATHORIZED_CODE,Constants.USER_NOT_FOUND) );
     }
 }

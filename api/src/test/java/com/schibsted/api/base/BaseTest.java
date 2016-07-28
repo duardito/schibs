@@ -44,21 +44,21 @@ public abstract class BaseTest {
         return url.replace(" ", "%20");
     }
 
-    protected JsonObject getJsonResponseGet(final String url,final String username,final String password) throws IOException {
+    protected JsonObject getJsonResponseGet(final String url,final String auth) throws IOException {
 
         final DefaultHttpClient httpclient = new DefaultHttpClient();
         final HttpGet post = new HttpGet( replaceCharacters(url) );
-        post.setHeader("Authorization", "Basic " + encodeUserLogin(username, password));
+        post.setHeader("Authorization", auth);
         final HttpResponse response = httpclient.execute(post);
         final HttpEntity entity = response.getEntity();
         return getResponse(entity.getContent());
     }
 
-    protected JsonObject getJsonResponsePut(final String url, final Map<String, String> mapParams,final String username,final String password) throws IOException {
+    protected JsonObject getJsonResponsePut(final String url, final Map<String, String> mapParams,final String auth) throws IOException {
 
         final DefaultHttpClient httpclient = new DefaultHttpClient();
         final HttpPut post = new HttpPut(replaceCharacters(url));
-        post.setHeader("Authorization", "Basic " + encodeUserLogin(username, password));
+        post.setHeader("Authorization", auth);
         final List<NameValuePair> params = getParams(mapParams);
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
         final HttpResponse response = httpclient.execute(post);
@@ -66,11 +66,27 @@ public abstract class BaseTest {
         return getResponse(entity.getContent());
     }
 
-    protected JsonObject getJsonResponsePost(final String url, final Map<String, String> mapParams, String username, String password) throws IOException {
+    protected JsonObject getJsonResponsePostForLogin(final String url, String username, String password) throws IOException {
 
         final DefaultHttpClient httpclient = new DefaultHttpClient();
         final HttpPost post = new HttpPost(replaceCharacters(url));
-        post.setHeader("Authorization", "Basic " + encodeUserLogin(username, password));
+        String ence = encodeUserLogin(username, password);
+        post.setHeader("Authorization", "Basic " + ence);
+        Map<String,String> mapParams = new HashMap<>();
+        mapParams.put("username",username);
+        mapParams.put("password",password);
+        final List<NameValuePair> params = getParams(mapParams);
+        post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+        final HttpResponse response = httpclient.execute(post);
+        HttpEntity entity = response.getEntity();
+        return getResponse(entity.getContent());
+    }
+
+    protected JsonObject getJsonResponsePost(final String url, final Map<String, String> mapParams, String auth) throws IOException {
+
+        final DefaultHttpClient httpclient = new DefaultHttpClient();
+        final HttpPost post = new HttpPost(replaceCharacters(url));
+        post.setHeader("Authorization", auth);
         final List<NameValuePair> params = getParams(mapParams);
         post.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
 

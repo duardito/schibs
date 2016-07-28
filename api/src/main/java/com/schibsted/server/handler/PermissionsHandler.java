@@ -48,7 +48,7 @@ public abstract class PermissionsHandler {
         return getDecryptedCreadentials(authorization);
     }
 
-    protected Optional<User> loginUser(final String authorization) {
+    protected User loginUser(final String authorization) {
 
         final String[] values = getCredentials(authorization);
         final String usernameLogin = getUsernameFromAuthorization(values);
@@ -132,7 +132,7 @@ public abstract class PermissionsHandler {
             throw new UnathorizedException(httpExchange.getResponseBody());
         }
 
-        final Optional<User> access = loginUser(authorization);
+        final Optional<User> access = Optional.of(loginUser(authorization)) ;
 
         if (!access.isPresent()) {
             httpExchange.sendResponseHeaders(Constants.UNATHORIZED_CODE, 0);

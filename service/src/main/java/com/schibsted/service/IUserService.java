@@ -10,7 +10,7 @@ import java.util.Optional;
  */
 public interface IUserService {
 
-    Optional<User> loadUserByUsernameAndPassword(String username, String password);
+    User loadUserByUsernameAndPassword(String username, String password);
 
     Optional<User> save(User user);
 

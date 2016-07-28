@@ -8,6 +8,7 @@ import com.schibsted.server.messages.page.PageMessageApi;
 import com.schibsted.server.security.SecurityUtils;
 import com.schibsted.service.IUserService;
 import com.schibsted.service.UserServiceImpl;
+import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -31,8 +32,13 @@ public class PageHandler extends PermissionsHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
         try {
+            final Headers headers = httpExchange.getRequestHeaders();
+            if (!headers.containsKey("Authorization")) {
+                httpExchange.sendResponseHeaders(Constants.NOT_LOGGED_IN_CODE, 0);
+                throw new UnathorizedException(httpExchange.getResponseBody());
+            }
+            final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
             //user has not authorization, so it is not logged in
             checkAuthorization(httpExchange, authorization);
 

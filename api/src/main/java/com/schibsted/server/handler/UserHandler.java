@@ -151,6 +151,8 @@ public class UserHandler extends PermissionsHandler implements HttpHandler {
 
     }
 
+
+
     private void validFieldsPost(HttpExchange httpExchange,Map<String, String> queryMap) throws Exception {
         if (!validateFields( queryMap)) {
             httpExchange.sendResponseHeaders(Constants.BAD_REQUEST_CODE, 0);
@@ -161,6 +163,26 @@ public class UserHandler extends PermissionsHandler implements HttpHandler {
     private String replacedCharacters(final String roles) {
 
         return roles.replace("%2C", ",");
+    }
+
+    private void validateRoles(HttpExchange httpExchange, final String roles) throws Exception {
+        if (!validateRoles(roles) ) {
+            httpExchange.sendResponseHeaders(Constants.BAD_REQUEST_CODE, 0);
+            throw new BadRequestException(httpExchange.getResponseBody());
+        }
+    }
+
+    private boolean validateRoles(final String roles) throws UnsupportedEncodingException {
+        final LinkedHashSet<String> rolesSet = new LinkedHashSet<>();
+        rolesSet.add(Constants.PAGE_1);
+        rolesSet.add(Constants.PAGE_2);
+        rolesSet.add(Constants.PAGE_3);
+        rolesSet.add(Constants.ADMIN);
+
+        LinkedHashSet<String> rolesToCheck = getRoles( roles);
+        boolean found = rolesSet.stream().filter(role -> !rolesToCheck.contains(role)).findAny().isPresent();
+
+        return found;
     }
 
     private LinkedHashSet<String> getRoles(final String roles) throws UnsupportedEncodingException {

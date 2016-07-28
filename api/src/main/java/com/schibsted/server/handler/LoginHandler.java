@@ -36,10 +36,11 @@ public class LoginHandler extends PermissionsHandler implements HttpHandler {
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
-        Headers responseHeaders = httpExchange.getResponseHeaders();
-        //responseHeaders.set("Content-Type", "application/x-www-form-urlencoded");
-        //responseHeaders.set("Content-Type","application/json");
 
+        Headers headers = httpExchange.getResponseHeaders();
+        headers.add("Access-Control-Allow-Headers","x-prototype-version,x-requested-with");
+        headers.add("Access-Control-Allow-Methods","GET,POST,PUT");
+        headers.add("Access-Control-Allow-Origin","*");
 
         try {
             final Map<String, String> queryMap = getParamsMap(httpExchange);
@@ -55,6 +56,7 @@ public class LoginHandler extends PermissionsHandler implements HttpHandler {
 
             usersInDelay(loggedUser);
 
+            headers.add("Authorization","Basic " + encodeUserLogin(username, password));
             httpExchange.sendResponseHeaders(Constants.OPERATION_OK_CODE, 0);
             new UserMessage(httpExchange.getResponseBody(),
                     LoginMessage.build("Basic " + encodeUserLogin(username, password)));

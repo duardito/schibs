@@ -44,7 +44,7 @@ public abstract class PermissionsHandler {
         return values[1];
     }
 
-    public String [] getCredentials(final String authorization){
+    protected String [] getCredentials(final String authorization){
         return getDecryptedCreadentials(authorization);
     }
 

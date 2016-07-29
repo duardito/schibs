@@ -26,3 +26,11 @@ Page 2 : "toni", "5678"
 		 
 Page 3 : "juan", "7788"
 
+---------------------------------
+
+Comments:
+
+I didn't use RxJava because I do not have enough knowledge to apply it, 
+i have few ideas where to use it, for example, from api consuming an observable in service class. 
+
+

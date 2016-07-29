@@ -3,9 +3,6 @@ package com.schibsted.domain.user;
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class User implements Serializable {
 
     private String username;

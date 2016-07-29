@@ -8,7 +8,6 @@ import java.util.Map;
  */
 public final class Utils {
 
-
     public static Map<String, String> queryToMap(final String query) {
 
         Map<String, String> result = new HashMap<String, String>();

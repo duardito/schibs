@@ -14,6 +14,8 @@
             success: function (data) {
               var response = JSON.parse(data);
               localStorage.setItem('Authorization', response.auth);
+			  window.history.back();
+			  
             },
 			error:function(data){
 				console.log(data);

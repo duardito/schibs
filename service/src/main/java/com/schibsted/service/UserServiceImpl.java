@@ -8,9 +8,6 @@ import com.schibsted.repository.UserRepositoryImpl;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class UserServiceImpl implements IUserService {
 
     private IUserRepository userRepository;

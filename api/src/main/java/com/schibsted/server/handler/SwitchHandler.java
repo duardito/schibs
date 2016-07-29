@@ -6,9 +6,6 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.net.URI;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class SwitchHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {

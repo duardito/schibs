@@ -1,8 +1,5 @@
 package com.schibsted.common;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class Constants {
 
     public static final String PAGE_1 ="PAGE_1";
@@ -32,6 +29,5 @@ public class Constants {
 
     //5 minutes
     public static final int _DELAYTIME = 5 * 60000;
-
 
 }

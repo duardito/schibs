@@ -7,17 +7,14 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-/**
- * Created by edu on 27/7/16.
- */
 public abstract class BaseMessageWrapper {
 
     public BaseMessageWrapper(){
     }
 
-    public  BaseMessageWrapper (OutputStream out, Object outputMessage) throws IOException {
+    public  BaseMessageWrapper (final OutputStream out,final Object outputMessage) throws IOException {
         final Gson gson = new Gson();
-        Writer w = new OutputStreamWriter(out);
+        final Writer w = new OutputStreamWriter(out);
         w.write(gson.toJson(outputMessage));
         w.flush();
         w.close();

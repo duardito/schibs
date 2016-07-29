@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-/**
- * Created by edu on 23/07/2016.
- */
 public class UserRepositoryImpl implements IUserRepository {
 
     private static List<User> userList = new ArrayList<User>();

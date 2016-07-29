@@ -6,9 +6,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
-/**
- * Created by edu on 27/7/16.
- */
 public abstract class MessageWrapperException extends Exception {
 
     public MessageWrapperException(){

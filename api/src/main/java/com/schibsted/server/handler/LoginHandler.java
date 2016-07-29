@@ -2,7 +2,6 @@ package com.schibsted.server.handler;
 
 import com.schibsted.common.Constants;
 import com.schibsted.domain.user.User;
-import com.schibsted.server.exception.UserNotFoundException;
 import com.schibsted.server.messages.LoginMessage;
 import com.schibsted.server.messages.user.UserMessage;
 import com.schibsted.service.IUserService;
@@ -36,15 +35,6 @@ public class LoginHandler extends PermissionsHandler implements HttpHandler {
 
     public void handle(HttpExchange httpExchange) throws IOException {
 
-/*
- {
-            response.addHeader("Access-Control-Allow-Origin", origin);
-        }
-        response.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, OPTIONS, DELETE");
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Headers", "x-uw-act-as, Origin, X-Requested-With, Content-Type, Accept, " + tokenHeader);
-        chain.doFilter(req, res);
- */
         Headers headers = httpExchange.getResponseHeaders();
         headers.add("Access-Control-Allow-Headers", "x-uw-act-as, Origin, X-Requested-With, Content-Type, Accept, Authorization");
         headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
@@ -58,12 +48,9 @@ public class LoginHandler extends PermissionsHandler implements HttpHandler {
 
             final User user = userService.loadUserByUsernameAndPassword(username, password);
             final Optional<User> loggedUser = Optional.ofNullable(user);
-            if (!loggedUser.isPresent()) {
-                httpExchange.sendResponseHeaders(Constants.CONFLICT_CODE, 0);
-                throw new UserNotFoundException(httpExchange.getResponseBody());
-            }
+            checkUserExists(httpExchange, loggedUser);
 
-            usersInDelay(loggedUser);
+            userDelayService.usersInDelay(loggedUser);
 
             headers.add("Authorization", "Basic " + encodeUserLogin(username, password));
             httpExchange.sendResponseHeaders(Constants.OPERATION_OK_CODE, 0);
@@ -73,6 +60,8 @@ public class LoginHandler extends PermissionsHandler implements HttpHandler {
             e.printStackTrace();
         }
     }
+
+
 
 
 }

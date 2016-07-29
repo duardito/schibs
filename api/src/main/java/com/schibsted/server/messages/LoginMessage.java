@@ -5,11 +5,11 @@ package com.schibsted.server.messages;
  */
 public final class LoginMessage {
 
-    public static LoginMessage build(String auth){
+    public static LoginMessage build(final String auth){
         return new LoginMessage( auth);
     }
 
-    private LoginMessage(String auth) {
+    private LoginMessage(final String auth) {
         this.auth = auth;
 
     }

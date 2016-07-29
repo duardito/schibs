@@ -5,7 +5,7 @@ package com.schibsted.server.messages;
  */
 public class OutputMessage {
 
-    public static OutputMessage build(int code, String message){
+    public static OutputMessage build(final int code,final String message){
         return  new OutputMessage(code, message);
     }
 
@@ -21,15 +21,9 @@ public class OutputMessage {
         return code;
     }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
 
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }

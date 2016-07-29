@@ -5,9 +5,7 @@ import com.schibsted.common.Constants;
 import java.util.concurrent.Delayed;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by edu on 27/7/16.
- */
+
 public class UserDelay implements Delayed {
 
     private User user;

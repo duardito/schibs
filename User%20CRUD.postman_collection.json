@@ -1,0 +1,121 @@
+{
+	"id": "3c09d347-dd15-4027-3c05-7ac2d0a6f77c",
+	"name": "User CRUD",
+	"description": "",
+	"order": [
+		"ac298824-c8df-a3eb-3c74-1a25cd5bc5f4",
+		"0468bddb-7e0e-d2bb-4f81-9f0d5c7283e2",
+		"12ce856e-edf6-8da9-0136-03d3cd7592d0"
+	],
+	"folders": [],
+	"timestamp": 1469774543671,
+	"owner": 0,
+	"public": false,
+	"published": false,
+	"requests": [
+		{
+			"id": "0468bddb-7e0e-d2bb-4f81-9f0d5c7283e2",
+			"url": "http://localhost:15000/user/admin",
+			"method": "GET",
+			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\n",
+			"data": null,
+			"dataMode": "params",
+			"tests": null,
+			"preRequestScript": null,
+			"currentHelper": "basicAuth",
+			"helperAttributes": "{\"username\":\"admin\",\"password\":\"admin\",\"saveToRequest\":false,\"showPassword\":true}",
+			"pathVariables": {},
+			"version": 2,
+			"name": "http://localhost:15000/user/admin",
+			"description": "",
+			"descriptionFormat": "html",
+			"collectionId": "3c09d347-dd15-4027-3c05-7ac2d0a6f77c"
+		},
+		{
+			"id": "12ce856e-edf6-8da9-0136-03d3cd7592d0",
+			"url": "http://localhost:15000/user",
+			"method": "PUT",
+			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\n",
+			"data": [
+				{
+					"key": "username",
+					"value": "edu",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "dudu42s",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "roles",
+					"value": "PAGE_1,PAGE_2",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "",
+					"value": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"tests": null,
+			"preRequestScript": null,
+			"currentHelper": "basicAuth",
+			"helperAttributes": "{\"username\":\"admin\",\"password\":\"admin\",\"saveToRequest\":false,\"showPassword\":false}",
+			"pathVariables": {},
+			"version": 2,
+			"name": "http://localhost:15000/user",
+			"description": "",
+			"descriptionFormat": "html",
+			"collectionId": "3c09d347-dd15-4027-3c05-7ac2d0a6f77c"
+		},
+		{
+			"id": "ac298824-c8df-a3eb-3c74-1a25cd5bc5f4",
+			"url": "http://localhost:15000/user",
+			"method": "POST",
+			"headers": "Authorization: Basic YWRtaW46YWRtaW4=\n",
+			"data": [
+				{
+					"key": "username",
+					"value": "dudu1s",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "dudu42s",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "roles",
+					"value": "PAGE_1,PAGE_2",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "",
+					"value": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"tests": null,
+			"preRequestScript": null,
+			"currentHelper": "basicAuth",
+			"helperAttributes": "{\"username\":\"admin\",\"password\":\"admin\",\"saveToRequest\":false,\"showPassword\":false}",
+			"pathVariables": {},
+			"version": 2,
+			"name": "http://localhost:15000/user",
+			"description": "",
+			"descriptionFormat": "html",
+			"collectionId": "3c09d347-dd15-4027-3c05-7ac2d0a6f77c"
+		}
+	]
+}

@@ -5,9 +5,7 @@ import com.schibsted.domain.user.User;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by edu on 23/07/2016.
- */
+
 public interface IUserService {
 
     User loadUserByUsernameAndPassword(String username, String password);

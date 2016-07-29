@@ -8,11 +8,12 @@ import com.schibsted.server.messages.page.PageMessageApi;
 import com.schibsted.server.security.SecurityUtils;
 import com.schibsted.service.IUserService;
 import com.schibsted.service.UserServiceImpl;
-import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -29,17 +30,30 @@ public class PageHandler extends PermissionsHandler implements HttpHandler {
             accessUtils = new SecurityUtils();
         }
     }
+    public Map<String, String> queryToMap(String query){
+        Map<String, String> result = new HashMap<String, String>();
+        for (String param : query.split("&")) {
+            String pair[] = param.split("=");
+            if (pair.length>1) {
+                result.put(pair[0], pair[1]);
+            }else{
+                result.put(pair[0], "");
+            }
+        }
+        return result;
+    }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
-            final Headers headers = httpExchange.getRequestHeaders();
-            if (!headers.containsKey("Authorization")) {
+            Map<String, String> params = queryToMap(httpExchange.getRequestURI().getQuery());
+
+            if (!params.containsKey("Authorization")) {
                 httpExchange.sendResponseHeaders(Constants.NOT_LOGGED_IN_CODE, 0);
                 throw new UnathorizedException(httpExchange.getResponseBody());
             }
-            final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
-            //user has not authorization, so it is not logged in
+            String authorization = params.get("Authorization");
+
             checkAuthorization(httpExchange, authorization);
 
             final Optional<User> access = getUserAuthorization(httpExchange, authorization);

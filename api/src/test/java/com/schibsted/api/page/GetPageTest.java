@@ -44,7 +44,7 @@ public class GetPageTest extends BasePageTest{
         JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", edu,passwd);
         String auth = resp.get("auth").getAsString();
 
-        String url = "http://localhost:15000/"+USER_PAGE_1;
+        String url = "http://localhost:15000/"+USER_PAGE_1+"?Authorization="+auth;
 
         JsonObject response = getJsonResponseGet(url, auth);
         JsonElement pagename = response.get("pagename");
@@ -64,7 +64,7 @@ public class GetPageTest extends BasePageTest{
         JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", toni,password);
         String auth = resp.get("auth").getAsString();
 
-        String url = "http://localhost:15000/"+USER_PAGE_1;
+        String url = "http://localhost:15000/"+USER_PAGE_1+"?Authorization="+auth;
 
 
         JsonObject response = getJsonResponseGet(url, auth);
@@ -83,7 +83,7 @@ public class GetPageTest extends BasePageTest{
         JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", JUAN,JUAN_PASSWORD);
         String auth = resp.get("auth").getAsString();
 
-        String url = "http://localhost:15000/"+USER_PAGE_2;
+        String url = "http://localhost:15000/"+USER_PAGE_2+"?Authorization="+auth;
 
         JsonObject response = getJsonResponseGet(url, auth);
         JsonElement pagename = response.get("pagename");
@@ -99,7 +99,7 @@ public class GetPageTest extends BasePageTest{
         JsonObject resp = getJsonResponsePostForLogin("http://localhost:15000/login", JUAN,JUAN_PASSWORD);
         String auth = resp.get("auth").getAsString();
 
-        String url = "http://localhost:15000/"+USER_PAGE_3;
+        String url = "http://localhost:15000/"+USER_PAGE_3+"?Authorization="+auth;
 
         JsonObject response = getJsonResponseGet(url, auth);
         JsonElement pagename = response.get("pagename");

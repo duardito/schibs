@@ -1,0 +1,46 @@
+<html>
+<head>
+<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
+<script type="text/javascript">
+function visitPage(page,valor) {
+    $.ajax({
+        url: 'http://localhost:15000/'+page,
+        dataType: 'jsonp',
+        data: {
+        Authorization: valor
+    },
+        jsonp: "callback",
+        type: 'GET',
+        success: function (data) {
+          var response = JSON.parse(data);
+          console.log(response.pagename);
+        },
+      error:function(data){
+        console.log('err ' +data);
+      }
+    });
+}
+
+function validateAuth(){
+var valor = localStorage.getItem('Authorization');
+  if(valor == '' || valor == null){
+    window.location.href = "./login.html";
+  }else{
+    visitPage('Page 1',valor);
+  }
+}
+
+function logout(){
+  var valor = localStorage.getItem('Authorization');
+  visitPage('logout',valor);
+  localStorage.removeItem('Authorization');
+   window.location.href = "./login.html";
+}
+</script>
+</head>
+<body onload="validateAuth()">
+Hello <div id='name'/> in page <div id='page'/>
+
+<input type="button" onclick="logout();" value="logout">
+</body>
+</html>

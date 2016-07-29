@@ -57,7 +57,13 @@ public abstract class PermissionsHandler {
     }
 
     private String[] getDecryptedCreadentials(String authorization) {
-        final String base64Credentials = authorization.substring(("Basic".length() + 1), authorization.length() - 1);
+        int lent = 0;
+        if(authorization.endsWith("=]")){
+            lent = authorization.length()-1;
+        }else{
+            lent = authorization.length();
+        }
+        final String base64Credentials = authorization.substring(("Basic".length() + 1), lent);
         final String credentials = new String(Base64.getDecoder().decode(base64Credentials.trim()),
                 Charset.forName("UTF-8"));
         return credentials.split(":", 2);

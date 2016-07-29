@@ -15,7 +15,7 @@ public class LogoutHandler extends PermissionsHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         try {
-            final String authorization = httpExchange.getRequestHeaders().get("authorization").toString();
+            final String authorization = httpExchange.getRequestHeaders().get("Authorization").toString();
             final Optional<User> access = getUserAuthorization(httpExchange, authorization);
             UserDelay delay = UserDelay.build(access.get());
             getUserDelayedList().remove(delay);

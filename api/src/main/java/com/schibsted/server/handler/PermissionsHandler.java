@@ -74,6 +74,7 @@ public abstract class PermissionsHandler {
         return valid;
     }
 
+
     protected void validateRoles(HttpExchange httpExchange, final String roles) throws Exception {
         if (!validateRoles(roles)) {
             httpExchange.sendResponseHeaders(Constants.BAD_REQUEST_CODE, 0);
@@ -166,10 +167,14 @@ public abstract class PermissionsHandler {
         return user.getRoles().contains(Constants.ADMIN);
     }
 
-    protected Map<String, String> getParamsMap(HttpExchange httpExchange) throws IOException {
+    protected Map<String, String> getParamsMap(HttpExchange httpExchange) throws Exception {
         final InputStreamReader isr = new InputStreamReader(httpExchange.getRequestBody(), "utf-8");
         final BufferedReader br = new BufferedReader(isr);
         final String query = br.readLine();
+        if (query == null) {
+            httpExchange.sendResponseHeaders(Constants.BAD_REQUEST_CODE, 0);
+            throw new BadRequestException(httpExchange.getResponseBody());
+        }
         return Utils.queryToMap(query);
     }
 

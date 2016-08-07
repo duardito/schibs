@@ -15,6 +15,24 @@ import java.util.Optional;
 
 public class UserHandler extends PermissionsHandler implements HttpHandler {
 
+    private User buildUserFromRequest(Map<String, String> queryMap) throws IOException {
+
+        String username = null;
+        String password = null;
+        String roles = null;
+        if (queryMap.containsKey("username")) {
+            username = queryMap.get("username");
+        }
+        if (queryMap.containsKey("password")) {
+            password = queryMap.get("password");
+        }
+        if (queryMap.containsKey("roles")) {
+            roles = queryMap.get("roles");
+        }
+
+        return User.build(username, password, getRoles(roles));
+    }
+
 
     @Override
     public void handle(HttpExchange httpExchange) {
@@ -100,12 +118,6 @@ public class UserHandler extends PermissionsHandler implements HttpHandler {
         }
     }
 
-    private User buildUserFromRequest(Map<String, String> queryMap) throws IOException {
 
-        final String username = queryMap.get("username");
-        final String password = queryMap.get("password");
-        final String roles = queryMap.get("roles");
-        return User.build(username, password, getRoles(roles));
-    }
 
 }

@@ -32,6 +32,19 @@ public class UpdateUserTest extends BaseUserTest {
     }
 
     @Test
+    public void updateUserBadRequestNO_OK() throws IOException {
+
+        Map<String, String> map = new HashMap<>();
+
+        JsonObject response = getJsonResponsePut("http://localhost:15000/user", map, login());
+        JsonElement code = response.get("code");
+        JsonElement message = response.get("message");
+
+        Assert.assertEquals(code.getAsInt(), Constants.BAD_REQUEST_CODE);
+        Assert.assertEquals(message.getAsString(), Constants.BAD_REQUEST);
+    }
+
+    @Test
     public void updateUserFailOnlyOneAdminNO_OK() throws IOException {
 
 

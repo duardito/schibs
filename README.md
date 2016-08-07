@@ -33,4 +33,6 @@ Comments:
 I didn't use RxJava because I do not have enough knowledge to apply it, 
 i have few ideas where to use it, for example, from api consuming an observable in service class. 
 
+I had some problems trying to send authorization key in headers in each request, I tried adding cors with no success, this is why I needed to send authorization key as query string instead in headers.
+
 
